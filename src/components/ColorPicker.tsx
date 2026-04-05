@@ -20,17 +20,20 @@ export function ColorPicker({ onSubmit, index }: ColorPickerProps) {
   }, [hue, saturation, brightness, onSubmit]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Color preview */}
       <div
-        className="w-full h-48 rounded-xl shadow-lg mx-auto"
+        className="w-full h-40 rounded-xl shadow-lg"
         style={{ backgroundColor: hsbToHex(currentColor) }}
       />
 
+      {/* HSB value display */}
       <div className="text-center text-sm text-neutral-400 font-mono">
         {hsbToString(currentColor)}
       </div>
 
-      <div className="space-y-6">
+      {/* Sliders */}
+      <div className="space-y-5">
         <Slider
           label="Hue"
           value={hue}
@@ -57,6 +60,7 @@ export function ColorPicker({ onSubmit, index }: ColorPickerProps) {
         />
       </div>
 
+      {/* Submit button */}
       <button
         onClick={handleSubmit}
         className="w-full py-4 bg-white text-black font-semibold rounded-lg hover:bg-neutral-200 transition-colors text-lg"

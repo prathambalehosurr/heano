@@ -19,6 +19,7 @@ import { ColorPicker } from "./ColorPicker";
 import { MenuScreen } from "./MenuScreen";
 import { MemorizeScreen } from "./MemorizeScreen";
 import { ResultsScreen } from "./ResultsScreen";
+import { saveScore, getHighScore } from "@/lib/scores";
 
 export function Game() {
   const [mode, setMode] = useState<GameMode>("solo");
@@ -103,7 +104,8 @@ export function Game() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const totalScore = results.reduce((sum, r) => sum + r.score, 0);
+  const totalScore = results.reduce((sum: number, r: ColorResult) => sum + r.score, 0);
+  const highScore = getHighScore();
 
   if (phase === "menu") {
     return (
@@ -128,13 +130,13 @@ export function Game() {
 
   if (phase === "recreate") {
     return (
-      <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white">
-        <div className="w-full max-w-lg px-6 py-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">
-              Color {currentIndex + 1} of {colors.length}
-            </h2>
-            <p className="text-neutral-400">Recreate the color from memory</p>
+      <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white px-4 py-8">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold mb-1">color</h2>
+            <p className="text-neutral-500 text-sm">
+              {currentIndex + 1} of {colors.length}
+            </p>
           </div>
 
           <ColorPicker

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { HSB, hsbToHex } from "@/lib/game";
 
 interface MemorizeScreenProps {
@@ -10,30 +11,59 @@ interface MemorizeScreenProps {
 }
 
 export function MemorizeScreen({ colors, timeLeft, formatTime, mode }: MemorizeScreenProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [colors]);
+
+  const currentColor = colors[currentIndex];
+  if (!currentColor) return null;
+
+  const hex = hsbToHex(currentColor);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-950 text-white px-4">
-      <div className="w-full max-w-lg text-center">
-        {mode !== "solo" && (
-          <div className="mb-4 text-neutral-400 text-sm">
-            {formatTime(timeLeft)}
-          </div>
-        )}
+    <div className="relative min-h-screen flex flex-col">
+      <div
+        className="absolute inset-0"
+        style={{ backgroundColor: hex }}
+      />
 
-        <h2 className="text-2xl font-bold mb-8">Memorize these colors</h2>
+      <div className="relative z-10 flex justify-center gap-2 pt-6">
+        {colors.map((_, i) => (
+          <div
+            key={i}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              i === currentIndex ? "bg-white" : "bg-black/30"
+            }`}
+          />
+        ))}
+      </div>
 
-        <div className="flex gap-3 justify-center mb-12">
-          {colors.map((color, i) => (
-            <div
-              key={i}
-              className="w-20 h-20 rounded-lg shadow-lg transition-transform hover:scale-105"
-              style={{ backgroundColor: hsbToHex(color) }}
-            />
-          ))}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
+        <div className="text-8xl font-extrabold text-black/80">
+          {timeLeft}
         </div>
+        <div className="text-sm font-medium text-black/50 mt-2">
+          Seconds to remember
+        </div>
+      </div>
 
-        <p className="text-neutral-500 text-sm animate-pulse">
-          Study carefully...
-        </p>
+      <div className="relative z-10 flex justify-center pb-8">
+        <button
+          onClick={() => {
+            if (currentIndex + 1 < colors.length) {
+              setCurrentIndex(currentIndex + 1);
+            }
+          }}
+          className="px-6 py-2 bg-black/20 text-black/60 text-sm font-medium rounded-lg hover:bg-black/30 transition-colors"
+        >
+          {currentIndex + 1 < colors.length ? "Skip" : "Got it"}
+        </button>
+      </div>
+
+      <div className="relative z-10 text-center pb-4">
+        <span className="text-black/30 text-xs">Dialed.gg</span>
       </div>
     </div>
   );
