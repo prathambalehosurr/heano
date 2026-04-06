@@ -83,7 +83,7 @@ export default function ProfilePage() {
       <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50">
-        <a href="/" className="text-xl font-black tracking-tighter text-on-surface hover:text-primary transition-colors">COLOURED</a>
+        <a href="/" className="text-xl font-black tracking-tighter text-on-surface hover:text-primary transition-colors">DIALED</a>
         <a href="/leaderboard" className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant hover:text-on-surface transition-colors">Leaderboard</a>
       </nav>
 

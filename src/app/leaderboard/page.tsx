@@ -69,7 +69,7 @@ export default function LeaderboardPage() {
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col fade-in">
       <nav className="bg-[#131313]/90 backdrop-blur-md fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50">
-        <a href="/" className="text-xl font-black tracking-tighter text-[#e2e2e2] hover:text-primary transition-colors">COLOURED</a>
+        <a href="/" className="text-xl font-black tracking-tighter text-[#e2e2e2] hover:text-primary transition-colors">DIALED</a>
         <div className="flex items-center gap-6">
           {user?.email === "prathambalehosur.work@gmail.com" && (
             <button 
