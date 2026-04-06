@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getLeaderboard, getUserBest, clearLeaderboard } from "@/lib/database";
+import { getLeaderboardAndUserBest, clearLeaderboard } from "@/lib/database";
 import { formatScore } from "@/lib/game";
 import { useAuth } from "@/lib/auth-context";
 
@@ -11,7 +11,8 @@ interface LeaderboardEntry {
   mode: string;
   difficulty: string;
   created_at: string;
-  profiles: { name: string; avatar_url: string | null } | null;
+  user_id: string;
+  profiles: { name: string } | null;
 }
 
 export default function LeaderboardPage() {
@@ -26,26 +27,31 @@ export default function LeaderboardPage() {
   useEffect(() => {
     let isMounted = true;
     
-    const fetchLeaderboard = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const { data, error } = await getLeaderboard({
+        const { leaderboard, userBest } = await getLeaderboardAndUserBest({
           mode: filter === "all" ? undefined : filter,
           difficulty: diffFilter === "all" ? undefined : diffFilter,
           limit: 50,
+          userId: user?.id,
         });
 
         if (isMounted) {
-          if (error) {
-            console.error("Leaderboard fetch error:", error);
+          if (leaderboard.error) {
+            console.error("Leaderboard fetch error:", leaderboard.error);
             setEntries([]);
           } else {
-            // Normalize profiles data: some versions of supabase-js return an array even for 1:1 joins
-            const normalized = (data as any[])?.map(entry => ({
+            const normalized = (leaderboard.data as any[])?.map(entry => ({
               ...entry,
               profiles: Array.isArray(entry.profiles) ? entry.profiles[0] : entry.profiles
             })) || [];
             setEntries(normalized);
+          }
+          if (userBest.error) {
+            console.error("User best fetch error:", userBest.error);
+          } else {
+            setUserBestScore(userBest.best || 0);
           }
           setLoading(false);
         }
@@ -57,13 +63,7 @@ export default function LeaderboardPage() {
       }
     };
 
-    fetchLeaderboard();
-
-    if (user?.id) {
-       getUserBest(user.id).then(({ best }) => {
-          if (isMounted) setUserBestScore(best || 0);
-       });
-    }
+    fetchData();
 
     return () => {
       isMounted = false;
@@ -183,7 +183,20 @@ export default function LeaderboardPage() {
 
           <div className="space-y-4">
             {loading ? (
-              <div className="text-center py-16 text-on-surface-variant uppercase tracking-widest text-xs animate-pulse">Syncing Leaderboard...</div>
+              <div className="space-y-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="p-4 md:p-6 rounded-xl flex items-center gap-6 bg-surface-container-low/30 animate-pulse">
+                    <div className="w-12 h-8 bg-surface-container-highest rounded" />
+                    <div className="w-12 h-12 bg-surface-container-highest rounded-full flex-shrink-0" />
+                    <div className="flex-grow space-y-3">
+                      <div className="w-32 h-5 bg-surface-container-highest rounded" />
+                      <div className="w-20 h-3 bg-surface-container-highest rounded" />
+                    </div>
+                    <div className="hidden md:block w-16 h-8 bg-surface-container-highest rounded" />
+                    <div className="w-20 h-8 bg-surface-container-highest rounded" />
+                  </div>
+                ))}
+              </div>
             ) : entries.length === 0 ? (
               <div className="text-center py-16 bg-surface-container-low/30 rounded-xl border border-outline-variant/5">
                  <p className="text-on-surface-variant opacity-60 uppercase tracking-widest text-sm">No scores found</p>

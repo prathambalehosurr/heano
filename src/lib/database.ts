@@ -37,10 +37,9 @@ export async function getLeaderboard(params?: {
       mode,
       difficulty,
       created_at,
-      profiles (
-        id,
-        name,
-        avatar_url
+      user_id,
+      profiles!inner (
+        name
       )
     `)
     .order("score", { ascending: false })
@@ -71,6 +70,33 @@ export async function getUserBest(userId: string, mode?: string) {
 
   const { data, error } = await query;
   return { best: data?.[0]?.score ?? 0, error: error?.message || null };
+}
+
+export async function getLeaderboardAndUserBest(params: {
+  mode?: string;
+  difficulty?: string;
+  limit?: number;
+  userId?: string;
+}) {
+  const leaderboardPromise = getLeaderboard({
+    mode: params.mode,
+    difficulty: params.difficulty,
+    limit: params.limit,
+  });
+
+  const userBestPromise = params.userId
+    ? getUserBest(params.userId, params.mode)
+    : Promise.resolve({ best: 0, error: null });
+
+  const [leaderboard, userBest] = await Promise.all([
+    leaderboardPromise,
+    userBestPromise,
+  ]);
+
+  return {
+    leaderboard,
+    userBest,
+  };
 }
 
 export async function updateProfile(userId: string, updates: { name?: string; avatar_url?: string }) {
