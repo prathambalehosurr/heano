@@ -154,7 +154,7 @@ export function Game() {
             <span className="text-[10px] uppercase tracking-widest font-medium text-on-surface-variant">
               Round {currentIndex + 1} of {colors.length}
             </span>
-            <button className="text-[#ffb3b0] hover:text-[#ffb3b0] transition-colors duration-300 active:scale-95">
+            <button className="text-primary hover:text-primary transition-colors duration-300 active:scale-95">
               <span className="material-symbols-outlined">settings</span>
             </button>
           </div>

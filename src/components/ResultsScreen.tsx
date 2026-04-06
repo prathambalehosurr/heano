@@ -71,20 +71,20 @@ export function ResultsScreen({
             COLOURED
           </div>
           <div className="flex items-center gap-4">
-            <span className="material-symbols-outlined text-[#ffb3b0]" data-icon="leaderboard">
+            <span className="material-symbols-outlined text-primary" data-icon="leaderboard">
               leaderboard
             </span>
           </div>
         </div>
       </nav>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_#1b1b1b,_#131313)] pt-24 pb-12">
+      <main className="grow flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,#1b1b1b,#131313)] pt-24 pb-12">
         <div className="w-full max-w-4xl space-y-8">
           {/* Hero Analytics Section */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Big Score Card */}
             <div className="lg:col-span-5 bg-surface-container-low rounded-xl p-10 flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-container to-transparent opacity-30"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-primary-container to-transparent opacity-30"></div>
               <span className="text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-bold mb-4">
                 TOTAL ACCURACY
               </span>
