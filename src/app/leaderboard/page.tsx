@@ -24,21 +24,50 @@ export default function LeaderboardPage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    setLoading(true);
-    getLeaderboard({
-      mode: filter === "all" ? undefined : filter,
-      difficulty: diffFilter === "all" ? undefined : diffFilter,
-      limit: 50,
-    }).then(({ data }) => {
-      setEntries((data as unknown as LeaderboardEntry[]) || []);
-      setLoading(false);
-    });
+    let isMounted = true;
+    
+    const fetchLeaderboard = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await getLeaderboard({
+          mode: filter === "all" ? undefined : filter,
+          difficulty: diffFilter === "all" ? undefined : diffFilter,
+          limit: 50,
+        });
+
+        if (isMounted) {
+          if (error) {
+            console.error("Leaderboard fetch error:", error);
+            setEntries([]);
+          } else {
+            // Normalize profiles data: some versions of supabase-js return an array even for 1:1 joins
+            const normalized = (data as any[])?.map(entry => ({
+              ...entry,
+              profiles: Array.isArray(entry.profiles) ? entry.profiles[0] : entry.profiles
+            })) || [];
+            setEntries(normalized);
+          }
+          setLoading(false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error("Unexpected leaderboard error:", err);
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchLeaderboard();
 
     if (user?.id) {
        getUserBest(user.id).then(({ best }) => {
-          setUserBestScore(best || 0);
+          if (isMounted) setUserBestScore(best || 0);
        });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [filter, diffFilter, user?.id]);
 
   const handleClear = async () => {
