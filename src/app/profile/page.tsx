@@ -21,12 +21,12 @@ export default function ProfilePage() {
       router.replace("/login");
     }
     if (user) {
-      setName(profileName || user.email?.split("@")[0] || "");
+      setName(profileName || user.user_metadata?.name || user.email?.split("@")[0] || "");
       getUserBest(user.id).then(({ best }) => {
         setBestScore(best || 0);
       });
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, profileName]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -34,35 +34,33 @@ export default function ProfilePage() {
   };
 
   const handleSave = async () => {
+    if (!user || !name.trim()) return;
     setIsSaving(true);
-    if (user) {
-      try {
-        const { error: profileError } = await updateProfile(user.id, { name });
-        if (profileError) {
-           console.error(profileError);
-           alert("Failed to update database profile: " + profileError);
-           setIsSaving(false);
-           return;
-        }
-
-        const { error: authError } = await supabase.auth.updateUser({
-          data: { name }
-        });
-        if (authError) {
-           console.error(authError);
-           alert("Failed to update auth metadata: " + authError.message);
-           setIsSaving(false);
-           return;
-        }
-        
-        setIsEditing(false);
-        // Force reload to update context cleanly
-        window.location.reload();
-      } catch (e) {
-        console.error("Error updating profile", e);
+    try {
+      const { error: profileError } = await updateProfile(user.id, { name: name.trim() });
+      if (profileError) {
+        console.error("DB error:", profileError);
+        alert("Failed to save name: " + profileError);
+        setIsSaving(false);
+        return;
       }
+
+      const { error: authError } = await supabase.auth.updateUser({
+        data: { name: name.trim() }
+      });
+      if (authError) {
+        console.error("Auth error:", authError);
+        // Non-fatal — DB is source of truth, continue
+      }
+
+      setIsEditing(false);
+      // Name is already in local state — no need to reload
+    } catch (e) {
+      console.error("Unexpected error saving profile:", e);
+      alert("An unexpected error occurred");
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   const getAccuracy = (score: number) => {
@@ -83,7 +81,7 @@ export default function ProfilePage() {
       <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50">
-        <a href="/" className="text-xl font-black tracking-tighter text-on-surface hover:text-primary transition-colors">DIALED</a>
+        <a href="/" className="text-xl font-black tracking-tighter text-on-surface hover:text-primary transition-colors">COLOURED</a>
         <a href="/leaderboard" className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant hover:text-on-surface transition-colors">Leaderboard</a>
       </nav>
 

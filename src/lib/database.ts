@@ -76,8 +76,7 @@ export async function getUserBest(userId: string, mode?: string) {
 export async function updateProfile(userId: string, updates: { name?: string; avatar_url?: string }) {
   const { data, error } = await supabase
     .from("profiles")
-    .update(updates)
-    .eq("id", userId)
+    .upsert({ id: userId, ...updates }, { onConflict: "id" })
     .select()
     .single();
 

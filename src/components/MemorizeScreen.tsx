@@ -35,7 +35,7 @@ export function MemorizeScreen({ colors, timeLeft, formatTime, mode }: MemorizeS
 
       {/* Top Nav (Minimal for memory screen) */}
       <nav className="relative z-10 w-full flex justify-between items-center px-8 py-6">
-        <div className="text-xl font-black tracking-tighter text-white drop-shadow-md">DIALED</div>
+        <div className="text-xl font-black tracking-tighter text-white drop-shadow-md">COLOURED</div>
         <div className="text-[12px] uppercase tracking-[0.3em] font-black text-white/90 drop-shadow-md">
           {formatTime(timeLeft)}
         </div>

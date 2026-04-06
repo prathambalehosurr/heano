@@ -29,7 +29,7 @@ export function MenuScreen({ onStart, difficulty, onDifficultyChange }: MenuScre
     <div className="bg-surface text-on-surface min-h-screen flex flex-col overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-[#131313]/80 backdrop-blur-md">
-        <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">DIALED</div>
+        <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">COLOURED</div>
         <div className="flex items-center gap-6">
           <a href="/leaderboard" className="text-[#e0bfbd] hover:text-[#ffb3b0] transition-colors duration-300 flex items-center gap-2 group">
             <span className="material-symbols-outlined text-[20px]">leaderboard</span>
@@ -63,7 +63,7 @@ export function MenuScreen({ onStart, difficulty, onDifficultyChange }: MenuScre
               {/* Header Section */}
               <div className="space-y-4">
                 <h1 className="text-7xl md:text-8xl font-black tracking-tighter text-on-surface">
-                  dialed
+                  colored
                 </h1>
                 <p className="text-on-surface-variant text-lg md:text-xl font-medium leading-relaxed max-w-lg mx-auto">
                   Humans can't reliably recall colors. This is a simple game to see how good (or bad) you are at it.

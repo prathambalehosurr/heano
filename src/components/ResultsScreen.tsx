@@ -68,7 +68,7 @@ export function ResultsScreen({
       <nav className="w-full top-0 sticky bg-[#131313] z-50">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <div className="text-2xl font-black tracking-tighter text-[#e2e2e2] uppercase">
-            DIALED
+            COLOURED
           </div>
           <div className="flex items-center gap-4">
             <span className="material-symbols-outlined text-[#ffb3b0]" data-icon="leaderboard">

@@ -138,7 +138,7 @@ export function Game() {
     return (
       <div className="flex flex-col items-center min-h-screen bg-surface text-on-surface px-4 py-8 relative pt-24 pb-32 fade-in">
         <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-[#131313]/80 backdrop-blur-md">
-          <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">DIALED</div>
+          <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">COLOURED</div>
           <div className="flex items-center gap-4">
             <span className="text-[10px] uppercase tracking-widest font-medium text-on-surface-variant">Round {currentIndex + 1} of {colors.length}</span>
             <button className="text-[#ffb3b0] hover:text-[#ffb3b0] transition-colors duration-300 active:scale-95">

@@ -62,7 +62,7 @@ export default function LoginPage() {
             href="/"
             className="text-2xl font-black tracking-tighter text-[#e2e2e2] uppercase font-sans"
           >
-            DIALED
+            COLOURED
           </Link>
           <div className="flex items-center gap-4">
             <span
@@ -126,7 +126,7 @@ export default function LoginPage() {
                 <div className="relative">
                   <input
                     className="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 focus:ring-primary-container focus:border-[#ff6b6b] focus:shadow-[0_0_15px_rgba(255,107,107,0.2)] transition-all duration-300"
-                    placeholder="name@dialed.com"
+                    placeholder="name@example.com"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -249,7 +249,7 @@ export default function LoginPage() {
           </a>
         </div>
         <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#e0bfbd]/40">
-          v1.0.4 DIALED PRECISION
+          v1.0.4 COLOURED
         </div>
       </footer>
     </div>

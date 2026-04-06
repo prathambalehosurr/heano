@@ -14,9 +14,9 @@ export interface LeaderboardEntry {
   date: string;
 }
 
-const USERS_KEY = "dialed-users";
-const CURRENT_USER_KEY = "dialed-current-user";
-const LEADERBOARD_KEY = "dialed-leaderboard";
+const USERS_KEY = "coloured-users";
+const CURRENT_USER_KEY = "coloured-current-user";
+const LEADERBOARD_KEY = "coloured-leaderboard";
 
 export function registerUser(name: string, email: string, password: string): User | null {
   const users = getUsers();
@@ -33,7 +33,7 @@ export function registerUser(name: string, email: string, password: string): Use
 
   const passwords = getPasswords();
   passwords[user.id] = password;
-  localStorage.setItem("dialed-passwords", JSON.stringify(passwords));
+  localStorage.setItem("coloured-passwords", JSON.stringify(passwords));
 
   users.push(user);
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
@@ -83,7 +83,7 @@ function getUsers(): User[] {
 
 function getPasswords(): Record<string, string> {
   try {
-    const data = localStorage.getItem("dialed-passwords");
+    const data = localStorage.getItem("coloured-passwords");
     return data ? JSON.parse(data) : {};
   } catch {
     return {};
