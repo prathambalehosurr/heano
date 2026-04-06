@@ -180,7 +180,7 @@ export function Game() {
         difficulty={difficulty}
         gameId={gameId}
         onPlayAgain={resetGame}
-        onStartNew={() => startGame(mode, playerName, gameId)}
+        onStartNew={resetGame}
       />
     );
   }
