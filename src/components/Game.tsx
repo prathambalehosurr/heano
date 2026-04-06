@@ -31,29 +31,32 @@ export function Game() {
   const [difficulty, setDifficulty] = useState<"easy" | "hard">("hard");
   const [timeLeft, setTimeLeft] = useState(0);
 
-  const startGame = useCallback((gameMode: GameMode, name?: string, id?: string) => {
-    let gameColors: HSB[];
+  const startGame = useCallback(
+    (gameMode: GameMode, name?: string, id?: string) => {
+      let gameColors: HSB[];
 
-    if (gameMode === "daily") {
-      gameColors = generateDailyColors();
-    } else {
-      gameColors = generateColors(5, difficulty === "hard");
-    }
+      if (gameMode === "daily") {
+        gameColors = generateDailyColors();
+      } else {
+        gameColors = generateColors(5, difficulty === "hard");
+      }
 
-    setMode(gameMode);
-    setColors(gameColors);
-    setResults([]);
-    setCurrentIndex(0);
-    setPlayerName(name || "");
-    setGameId(id);
-    setPhase("memorize");
+      setMode(gameMode);
+      setColors(gameColors);
+      setResults([]);
+      setCurrentIndex(0);
+      setPlayerName(name || "");
+      setGameId(id);
+      setPhase("memorize");
 
-    if (gameMode === "multiplayer") {
-      setTimeLeft(300);
-    } else {
-      setTimeLeft(15);
-    }
-  }, [difficulty]);
+      if (gameMode === "multiplayer") {
+        setTimeLeft(300);
+      } else {
+        setTimeLeft(15);
+      }
+    },
+    [difficulty],
+  );
 
   useEffect(() => {
     if (phase !== "memorize") return;
@@ -72,28 +75,31 @@ export function Game() {
     return () => clearInterval(timer);
   }, [phase]);
 
-  const submitGuess = useCallback((guess: HSB) => {
-    const original = colors[currentIndex];
-    const scoring = calculateScore(original, guess);
+  const submitGuess = useCallback(
+    (guess: HSB) => {
+      const original = colors[currentIndex];
+      const scoring = calculateScore(original, guess);
 
-    const result: ColorResult = {
-      original,
-      guess,
-      score: scoring.score,
-      baseScore: scoring.base,
-      hueRecovery: scoring.hueRecovery,
-      huePenalty: scoring.huePenalty,
-      deltaE: scoring.deltaE,
-    };
-    const newResults = [...results, result];
-    setResults(newResults);
+      const result: ColorResult = {
+        original,
+        guess,
+        score: scoring.score,
+        baseScore: scoring.base,
+        hueRecovery: scoring.hueRecovery,
+        huePenalty: scoring.huePenalty,
+        deltaE: scoring.deltaE,
+      };
+      const newResults = [...results, result];
+      setResults(newResults);
 
-    if (currentIndex + 1 < colors.length) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setPhase("results");
-    }
-  }, [colors, currentIndex, results]);
+      if (currentIndex + 1 < colors.length) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setPhase("results");
+      }
+    },
+    [colors, currentIndex, results],
+  );
 
   const resetGame = useCallback(() => {
     setPhase("menu");
@@ -110,7 +116,10 @@ export function Game() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const totalScore = results.reduce((sum: number, r: ColorResult) => sum + r.score, 0);
+  const totalScore = results.reduce(
+    (sum: number, r: ColorResult) => sum + r.score,
+    0,
+  );
   const highScore = getHighScore();
 
   if (phase === "menu") {
@@ -138,9 +147,13 @@ export function Game() {
     return (
       <div className="flex flex-col items-center min-h-screen bg-surface text-on-surface px-4 py-8 relative pt-24 pb-32 fade-in">
         <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-[#131313]/80 backdrop-blur-md">
-          <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">COLOURED</div>
+          <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">
+            COLOURED
+          </div>
           <div className="flex items-center gap-4">
-            <span className="text-[10px] uppercase tracking-widest font-medium text-on-surface-variant">Round {currentIndex + 1} of {colors.length}</span>
+            <span className="text-[10px] uppercase tracking-widest font-medium text-on-surface-variant">
+              Round {currentIndex + 1} of {colors.length}
+            </span>
             <button className="text-[#ffb3b0] hover:text-[#ffb3b0] transition-colors duration-300 active:scale-95">
               <span className="material-symbols-outlined">settings</span>
             </button>

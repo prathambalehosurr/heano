@@ -190,17 +190,19 @@ export default function LoginPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     type="button"
-                    onClick={() => signInWithOAuth("google")}
-                    className="flex items-center justify-center gap-2 py-3 bg-surface-container-lowest rounded-xl hover:bg-surface-container-highest transition-colors text-[10px] font-bold tracking-widest uppercase border border-white/5"
+                    disabled
+                    className="flex flex-col items-center justify-center gap-1 py-3 bg-surface-container-lowest rounded-xl text-[10px] font-bold tracking-widest uppercase border border-white/5 opacity-30 cursor-not-allowed"
                   >
                     Google
+                    <span className="text-[8px] tracking-normal normal-case font-medium">Coming Soon</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => signInWithOAuth("github")}
-                    className="flex items-center justify-center gap-2 py-3 bg-surface-container-lowest rounded-xl hover:bg-surface-container-highest transition-colors text-[10px] font-bold tracking-widest uppercase border border-white/5"
+                    disabled
+                    className="flex flex-col items-center justify-center gap-1 py-3 bg-surface-container-lowest rounded-xl text-[10px] font-bold tracking-widest uppercase border border-white/5 opacity-30 cursor-not-allowed"
                   >
                     GitHub
+                    <span className="text-[8px] tracking-normal normal-case font-medium">Coming Soon</span>
                   </button>
                 </div>
               </>
