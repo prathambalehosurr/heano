@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DIALED | Active Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "inverse-primary": "#ae2f34",
+                    "surface-container-high": "#2a2a2a",
+                    "tertiary": "#c7c6c6",
+                    "on-surface-variant": "#e0bfbd",
+                    "surface-container-highest": "#353535",
+                    "secondary-container": "#7f5a00",
+                    "outline-variant": "#584140",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#8c1520",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "tertiary-container": "#9b9b9b",
+                    "background": "#131313",
+                    "surface-dim": "#131313",
+                    "surface-container-low": "#1b1b1b",
+                    "primary-fixed": "#ffdad8",
+                    "primary-fixed-dim": "#ffb3b0",
+                    "outline": "#a78a88",
+                    "on-background": "#e2e2e2",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "tertiary-fixed": "#e3e2e2",
+                    "error-container": "#93000a",
+                    "surface-container": "#1f1f1f",
+                    "on-primary": "#68000f",
+                    "on-secondary-container": "#ffd790",
+                    "on-secondary-fixed-variant": "#5e4200",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface": "#131313",
+                    "on-secondary-fixed": "#271900",
+                    "on-surface": "#e2e2e2",
+                    "primary-container": "#ff6b6b",
+                    "error": "#ffb4ab",
+                    "inverse-on-surface": "#303030",
+                    "surface-variant": "#353535",
+                    "primary": "#ffb3b0",
+                    "on-primary-fixed": "#410006",
+                    "on-secondary": "#412d00",
+                    "on-error": "#690005",
+                    "inverse-surface": "#e2e2e2",
+                    "secondary-fixed": "#ffdea7",
+                    "secondary-fixed-dim": "#f0bf63",
+                    "on-primary-container": "#6d0010",
+                    "surface-tint": "#ffb3b0",
+                    "on-tertiary": "#2f3131",
+                    "surface-bright": "#393939",
+                    "on-tertiary-container": "#323333",
+                    "secondary": "#f0bf63"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom range styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 2px;
+            background: #2a2a2a;
+            border-radius: 999px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #e2e2e2;
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .color-swatch-glow {
+            box-shadow: 0 0 60px -15px rgba(0, 180, 180, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-[#131313]">
+<div class="text-xl font-black tracking-tighter text-[#e2e2e2]">DIALED</div>
+<div class="flex items-center gap-4">
+<span class="text-[10px] uppercase tracking-widest font-medium text-on-surface-variant">Round 1 of 5</span>
+<button class="text-[#ffb3b0] hover:text-[#ffb3b0] transition-colors duration-300 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-32">
+<!-- Center Piece: Asymmetric Layout -->
+<div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<!-- Swatch Display -->
+<div class="md:col-span-7 flex flex-col items-center md:items-start space-y-6">
+<div class="relative group">
+<!-- Target Swatch -->
+<div class="w-64 h-64 md:w-96 md:h-96 bg-[#008080] rounded-xl color-swatch-glow transition-all duration-700" style="background-color: #00b4b4;">
+</div>
+<!-- Label Overlay -->
+<div class="absolute -bottom-4 -right-4 bg-surface-container-highest px-4 py-2 rounded-lg backdrop-blur-xl bg-opacity-20 border border-outline-variant/10">
+<span class="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">Target</span>
+</div>
+</div>
+<div class="hidden md:block">
+<h1 class="text-display-sm font-black tracking-tighter text-on-surface leading-none mb-2 uppercase">Deep Teal</h1>
+<p class="text-on-surface-variant text-sm tracking-wide opacity-60">Match the frequency to proceed.</p>
+</div>
+</div>
+<!-- Controls (The Focus Ring philosophy) -->
+<div class="md:col-span-5 flex flex-col space-y-12 bg-surface-container-low p-8 rounded-xl relative">
+<!-- Focus Ring Gradient Decoration (Abstract) -->
+<div class="absolute inset-0 rounded-xl pointer-events-none border border-primary/5"></div>
+<!-- Sliders Section -->
+<div class="space-y-10">
+<!-- Red / Hue -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Red</label>
+<span class="text-[10px] font-mono text-on-surface-variant opacity-40">128</span>
+</div>
+<input class="w-full" max="255" min="0" type="range" value="128"/>
+</div>
+<!-- Green / Saturation -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Green</label>
+<span class="text-[10px] font-mono text-on-surface-variant opacity-40">128</span>
+</div>
+<input class="w-full" max="255" min="0" type="range" value="128"/>
+</div>
+<!-- Blue / Value -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Blue</label>
+<span class="text-[10px] font-mono text-on-surface-variant opacity-40">128</span>
+</div>
+<input class="w-full" max="255" min="0" type="range" value="128"/>
+</div>
+</div>
+<!-- Action -->
+<div class="pt-4">
+<!-- Signature Button -->
+<button class="relative group w-full py-4 rounded-xl font-black text-[12px] uppercase tracking-[0.3em] overflow-hidden">
+<div class="absolute inset-0 bg-primary-container opacity-90 group-hover:opacity-100 transition-opacity"></div>
+<span class="relative text-on-primary-container z-10">Submit Match</span>
+</button>
+<button class="w-full mt-4 py-2 text-[10px] uppercase tracking-widest text-on-surface-variant opacity-40 hover:opacity-100 transition-opacity">
+                        Skip Round
+                    </button>
+</div>
+<!-- Real-time Preview Swatch (Small) -->
+<div class="absolute -top-6 right-8 flex flex-col items-end gap-2">
+<div class="w-12 h-12 rounded-full border-2 border-surface bg-[#808080] shadow-xl"></div>
+<span class="text-[8px] uppercase tracking-widest text-on-surface-variant">Current</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full flex justify-center items-center gap-8 pb-6 text-[10px] opacity-40 hover:opacity-100 transition-opacity duration-500 bg-transparent text-[#ffb3b0]">
+<span class="uppercase tracking-[0.2em] font-medium">Documentation</span>
+<span class="uppercase tracking-[0.2em] font-medium">Support</span>
+<span class="uppercase tracking-[0.2em] font-medium">Privacy</span>
+<span class="text-[#584140] opacity-30">v1.0.4 obsidian_gallery</span>
+</footer>
+<!-- Decorative Elements (Glassmorphism/Obsidian Theme) -->
+<div class="fixed top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+<div class="fixed bottom-1/4 -right-32 w-96 h-96 bg-secondary/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+</body></html>
