@@ -8,7 +8,6 @@ import {
   ColorResult,
   hsbToHex,
   hsbToString,
-  calculateDistance,
   calculateScore,
   generateColors,
   generateDailyColors,
@@ -75,10 +74,17 @@ export function Game() {
 
   const submitGuess = useCallback((guess: HSB) => {
     const original = colors[currentIndex];
-    const distance = calculateDistance(original, guess);
-    const score = calculateScore(distance);
+    const scoring = calculateScore(original, guess);
 
-    const result: ColorResult = { original, guess, score };
+    const result: ColorResult = {
+      original,
+      guess,
+      score: scoring.score,
+      baseScore: scoring.base,
+      hueRecovery: scoring.hueRecovery,
+      huePenalty: scoring.huePenalty,
+      deltaE: scoring.deltaE,
+    };
     const newResults = [...results, result];
     setResults(newResults);
 
@@ -130,20 +136,22 @@ export function Game() {
 
   if (phase === "recreate") {
     return (
-      <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white px-4 py-8">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-1">color</h2>
-            <p className="text-neutral-500 text-sm">
-              {currentIndex + 1} of {colors.length}
-            </p>
+      <div className="flex flex-col items-center min-h-screen bg-surface text-on-surface px-4 py-8 relative pt-24 pb-32 fade-in">
+        <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 z-50 bg-[#131313]/80 backdrop-blur-md">
+          <div className="text-xl font-black tracking-tighter text-[#e2e2e2]">DIALED</div>
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] uppercase tracking-widest font-medium text-on-surface-variant">Round {currentIndex + 1} of {colors.length}</span>
+            <button className="text-[#ffb3b0] hover:text-[#ffb3b0] transition-colors duration-300 active:scale-95">
+              <span className="material-symbols-outlined">settings</span>
+            </button>
           </div>
+        </nav>
 
-          <ColorPicker
-            onSubmit={submitGuess}
-            index={currentIndex}
-          />
+        <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-20 pointer-events-none">
+          <div className="w-[500px] h-[500px] bg-primary rounded-full blur-[120px] ambient-glow"></div>
         </div>
+
+        <ColorPicker onSubmit={submitGuess} index={currentIndex} />
       </div>
     );
   }
@@ -156,6 +164,7 @@ export function Game() {
         formattedScore={formatScore(totalScore)}
         mode={mode}
         playerName={playerName}
+        difficulty={difficulty}
         gameId={gameId}
         onPlayAgain={resetGame}
         onStartNew={() => startGame(mode, playerName, gameId)}

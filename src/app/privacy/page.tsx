@@ -2,6 +2,10 @@ export default function PrivacyPage() {
   return (
     <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white px-4 py-12">
       <div className="w-full max-w-lg">
+        <a href="/" className="text-neutral-400 hover:text-white text-sm mb-8 inline-block">
+          ← DIALED
+        </a>
+
         <h1 className="text-3xl font-bold mb-6">Privacy</h1>
 
         <div className="space-y-4 text-neutral-300 text-sm">

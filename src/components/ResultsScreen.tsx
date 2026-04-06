@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ColorResult, hsbToHex, hsbToString, formatScore } from "@/lib/game";
-import { saveScore } from "@/lib/scores";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ColorResult, hsbToHex } from "@/lib/game";
+import { submitScore } from "@/lib/database";
 import { shareScore } from "@/lib/share";
+import { useAuth } from "@/lib/auth-context";
 
 interface ResultsScreenProps {
   results: ColorResult[];
@@ -11,6 +13,7 @@ interface ResultsScreenProps {
   formattedScore: string;
   mode: "solo" | "multiplayer" | "daily";
   playerName: string;
+  difficulty: "easy" | "hard";
   gameId?: string;
   onPlayAgain: () => void;
   onStartNew: () => void;
@@ -19,28 +22,37 @@ interface ResultsScreenProps {
 export function ResultsScreen({
   results,
   totalScore,
-  formattedScore,
   mode,
-  playerName,
-  gameId,
+  difficulty,
   onPlayAgain,
   onStartNew,
 }: ResultsScreenProps) {
-  const [initials, setInitials] = useState("");
   const [copied, setCopied] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
-  const maxScore = results.length * 1000;
-  const percentage = Math.round((totalScore / maxScore) * 100);
-
-  const handleSaveScore = () => {
-    saveScore({
-      name: initials || playerName || "Anonymous",
-      score: totalScore,
-      mode,
-      date: new Date().toISOString(),
-    });
-  };
+  useEffect(() => {
+    const handleAutoSubmit = async () => {
+      if (user && !submitted) {
+        setSubmitted(true);
+        await submitScore({
+          userId: user.id,
+          score: totalScore,
+          mode,
+          difficulty,
+          colorResults: results.map((r) => ({
+            hue: r.guess.h,
+            saturation: r.guess.s,
+            brightness: r.guess.b,
+            score: r.score,
+            deltaE: r.deltaE,
+          })),
+        });
+      }
+    };
+    handleAutoSubmit();
+  }, [user, submitted, totalScore, mode, difficulty, results]);
 
   const handleShare = () => {
     shareScore(totalScore, mode);
@@ -48,123 +60,133 @@ export function ResultsScreen({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const current = results[currentIndex];
-  if (!current) return null;
-
-  const guessHex = hsbToHex(current.guess);
-  const originalHex = hsbToHex(current.original);
+  const accuracy = Math.round((totalScore / 50) * 100);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white px-4 py-8">
-      <div className="w-full max-w-md">
-        {/* Score header */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-1">results</h2>
-          <div className="text-5xl font-bold">{formattedScore}/50</div>
+    <div className="bg-surface text-on-surface font-body min-h-screen flex flex-col">
+      {/* Top Navigation Bar */}
+      <nav className="w-full top-0 sticky bg-[#131313] z-50">
+        <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+          <div className="text-2xl font-black tracking-tighter text-[#e2e2e2] uppercase">
+            DIALED
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="material-symbols-outlined text-[#ffb3b0]" data-icon="leaderboard">
+              leaderboard
+            </span>
+          </div>
         </div>
+      </nav>
 
-        {/* Two-panel card */}
-        <div className="relative w-full rounded-2xl overflow-hidden shadow-xl mb-6" style={{ height: 360 }}>
-          {/* Top panel - Your selection */}
-          <div className="relative h-1/2" style={{ backgroundColor: guessHex }}>
-            <div className="absolute top-3 left-4 text-sm text-black/70">
-              {currentIndex + 1} / {results.length}
-            </div>
-            <div className="absolute top-0 right-6 text-right">
-              <div className="text-6xl font-extrabold text-black/90">
-                {(current.score / 10).toFixed(2)}
+      <main className="flex-grow flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_#1b1b1b,_#131313)] pt-24 pb-12">
+        <div className="w-full max-w-4xl space-y-8">
+          {/* Hero Analytics Section */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Big Score Card */}
+            <div className="lg:col-span-5 bg-surface-container-low rounded-xl p-10 flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-container to-transparent opacity-30"></div>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-bold mb-4">
+                TOTAL ACCURACY
+              </span>
+              <div className="relative">
+                <h1 className="text-8xl md:text-9xl font-black tracking-tighter leading-none italic text-on-surface">
+                  {accuracy}<span className="text-primary text-3xl not-italic align-top opacity-50">%</span>
+                </h1>
+              </div>
+              <div className="mt-8 pt-8 border-t border-outline-variant/15 w-full">
+                 <p className="text-on-surface-variant text-xs uppercase tracking-widest font-bold">
+                   Performance Index: {accuracy >= 90 ? "ELITE" : accuracy >= 70 ? "STABLE" : "IMPROVING"}
+                 </p>
               </div>
             </div>
-            <div className="absolute left-6 bottom-6 text-sm text-black/70">
-              <div className="font-medium">Your selection</div>
-              <div className="font-semibold text-black/90">{hsbToString(current.guess)}</div>
+
+            {/* Consistency Trend */}
+            <div className="lg:col-span-7 bg-surface-container-low rounded-xl p-10 flex flex-col justify-between shadow-2xl border border-outline-variant/5">
+              <div className="mb-8">
+                <h3 className="text-xl font-black tracking-tight uppercase italic">Consistency Trend</h3>
+                <span className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Session Delta Analysis</span>
+              </div>
+              
+              <div className="w-full h-40 flex items-end gap-3 px-2">
+                {results.map((r, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                    <div 
+                      className="w-full rounded-t-lg transition-all duration-700 ease-out min-h-[4px]" 
+                      style={{ 
+                        height: `${Math.max(5, (r.score / 10) * 100)}%`,
+                        backgroundColor: i === results.length - 1 ? 'var(--color-primary)' : 'var(--color-surface-container-highest)',
+                        opacity: i === results.length - 1 ? 1 : 0.4
+                      }}
+                    />
+                    <span className="text-[8px] font-bold text-on-surface-variant">R0{i + 1}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Round Breakdown */}
+          <div className="space-y-4">
+            <h2 className="text-[10px] uppercase tracking-[0.3em] font-black text-on-surface-variant ml-2">Round Breakdown</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              {results.map((result, i) => (
+                <div key={i} className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="text-[9px] text-on-surface-variant font-black tracking-widest">0{i + 1}</span>
+                    <div className="text-right">
+                      <div className="text-xl font-black italic">{(result.score / 10).toFixed(1)}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-3">
+                      <div 
+                        className="w-10 h-10 rounded-full border-2 border-surface shadow-lg z-10" 
+                        style={{ backgroundColor: hsbToHex(result.original) }}
+                        title="Target"
+                      />
+                      <div 
+                        className="w-10 h-10 rounded-full border-2 border-surface shadow-lg z-20" 
+                        style={{ backgroundColor: hsbToHex(result.guess) }}
+                        title="Your Guess"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Bottom panel - Original */}
-          <div className="relative h-1/2" style={{ backgroundColor: originalHex }}>
-            <div className="absolute left-6 bottom-6 text-sm text-black/70">
-              <div className="font-medium">Original</div>
-              <div className="font-semibold text-black/90">{hsbToString(current.original)}</div>
-            </div>
-          </div>
-
-          {/* Next button */}
-          {currentIndex + 1 < results.length && (
-            <button
-              onClick={() => setCurrentIndex(currentIndex + 1)}
-              className="absolute right-4 bottom-4 w-12 h-12 rounded-full bg-white text-black font-bold text-xl shadow-lg hover:bg-neutral-200 transition-colors flex items-center justify-center"
+          {/* Actions */}
+          <div className="flex flex-col md:flex-row gap-4 pt-12">
+            <button 
+              onClick={onPlayAgain}
+              className="flex-1 bg-primary text-on-primary font-black py-5 rounded-xl uppercase tracking-widest text-sm hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-primary/10"
             >
-              →
+              Reset Session
             </button>
-          )}
-        </div>
-
-        {/* Progress dots */}
-        <div className="flex gap-2 justify-center mb-8">
-          {results.map((_, i) => (
-            <div
-              key={i}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                i === currentIndex ? "bg-white" : "bg-neutral-700"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Action buttons */}
-        {currentIndex + 1 >= results.length && (
-          <>
-            {mode === "daily" && (
-              <div className="space-y-3 mb-6">
-                <input
-                  type="text"
-                  placeholder="Enter your initials"
-                  maxLength={3}
-                  value={initials}
-                  onChange={(e) => setInitials(e.target.value.toUpperCase())}
-                  className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-center text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-600 uppercase tracking-widest"
-                />
-                <button
-                  onClick={handleSaveScore}
-                  className="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-neutral-200 transition-colors"
-                >
-                  Post score & challenge a friend
-                </button>
-              </div>
-            )}
-
-            {(mode === "solo" || mode === "multiplayer") && (
-              <div className="space-y-3 mb-6">
-                <button
-                  onClick={handleShare}
-                  className="w-full py-3 bg-white text-black font-semibold rounded-lg hover:bg-neutral-200 transition-colors"
-                >
-                  {copied ? "Copied!" : "Share your score"}
-                </button>
-                <button className="w-full py-3 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-neutral-700 transition-colors">
-                  Daily Leaderboard
-                </button>
-              </div>
-            )}
-
-            <div className="flex gap-3">
-              <button
-                onClick={onPlayAgain}
-                className="flex-1 py-3 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-neutral-700 transition-colors"
-              >
-                Play Again
-              </button>
-              <button
+            <button 
+              onClick={handleShare}
+              className="flex-1 bg-surface-container-highest text-on-surface font-black py-5 rounded-xl uppercase tracking-widest text-sm hover:bg-on-surface hover:text-surface transition-all border border-white/5"
+            >
+              {copied ? "Link Copied" : "Share Analytics"}
+            </button>
+            {onStartNew && (
+              <button 
                 onClick={onStartNew}
-                className="flex-1 py-3 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-neutral-700 transition-colors"
+                className="px-8 py-5 bg-surface-container-low text-on-surface-variant font-black rounded-xl uppercase tracking-widest text-sm hover:text-on-surface transition-all"
               >
-                New Game
+                Menu
               </button>
-            </div>
-          </>
-        )}
-      </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <footer className="py-12 border-t border-white/5 flex flex-col items-center opacity-40">
+         <div className="text-[10px] uppercase tracking-[0.2em] font-black">
+          Precision Metrics End-to-End
+        </div>
+      </footer>
     </div>
   );
 }
