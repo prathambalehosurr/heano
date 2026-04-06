@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Coloured — Color Memory Game",
+  title: "DIALED — Color Memory Game",
   description: "How well can you remember colors? We show you a series of colors, then you recreate them from memory.",
 };
 
