@@ -30,6 +30,8 @@ export function Game() {
   const [gameId, setGameId] = useState<string | undefined>();
   const [difficulty, setDifficulty] = useState<"easy" | "hard">("hard");
   const [timeLeft, setTimeLeft] = useState(0);
+  const [recreateTimeLeft, setRecreateTimeLeft] = useState(15);
+  const [recreateTimeoutRef, setRecreateTimeoutRef] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const startGame = useCallback(
     (gameMode: GameMode, name?: string, id?: string) => {
@@ -48,12 +50,8 @@ export function Game() {
       setPlayerName(name || "");
       setGameId(id);
       setPhase("memorize");
-
-      if (gameMode === "multiplayer") {
-        setTimeLeft(300);
-      } else {
-        setTimeLeft(15);
-      }
+      setTimeLeft(15);
+      setRecreateTimeLeft(15);
     },
     [difficulty],
   );
@@ -74,6 +72,24 @@ export function Game() {
 
     return () => clearInterval(timer);
   }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "recreate") return;
+
+    setRecreateTimeLeft(15);
+
+    const timer = setInterval(() => {
+      setRecreateTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [phase, currentIndex]);
 
   const submitGuess = useCallback(
     (guess: HSB) => {
@@ -164,7 +180,11 @@ export function Game() {
           <div className="w-[500px] h-[500px] bg-primary rounded-full blur-[120px] ambient-glow"></div>
         </div>
 
-        <ColorPicker onSubmit={submitGuess} index={currentIndex} />
+        <ColorPicker
+          onSubmit={submitGuess}
+          index={currentIndex}
+          timeLeft={recreateTimeLeft}
+        />
       </div>
     );
   }
