@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  useEffect(() => {
     // Safety timeout: Ensure loading finishes even if Supabase hangs
     const timeout = setTimeout(() => {
       setLoading(false);
@@ -67,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
+  }, []);
 
   const signUp = useCallback(async (email: string, password: string, name: string) => {
     const { data, error } = await supabase.auth.signUp({
